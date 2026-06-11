@@ -1,0 +1,7 @@
+interface:
+  display_name: "Task Manager Skill"
+  short_description: "管理 Task Manager Desktop 任务和看板"
+  default_prompt: "Use $task-manager-skill to inspect my current tasks and update the board as needed."
+
+policy:
+  allow_implicit_invocation: true
