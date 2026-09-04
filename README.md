@@ -14,9 +14,9 @@ After installation, an agent can:
 
 - Install or update `task-manager-cli` automatically.
 - Locate the active Task Manager SQLite database.
-- Read task types, lists, boards, details, and statistics.
-- Add, update, move, start, complete, and delete tasks.
-- Manage task types and subtasks.
+- Read task types, people, lists, boards, details, and statistics.
+- Add, update, move, start, complete, cancel, and delete tasks.
+- Manage task types, locations, associated people, and subtasks.
 - Prefer JSON output so task state can be parsed reliably.
 
 ## Repository Layout
@@ -95,12 +95,13 @@ tm --json stats
 tm --json add "Write weekly report" --type Work --status todo
 tm --json start 1
 tm --json done 1
+tm --json cancel 1
 tm --json subtask add 1 "Check numbers"
 ```
 
 ## Shared Data Model
 
-The desktop app and CLI share the same local SQLite database. The skill does not define its own task store; it delegates all task operations to [task-manager-cli](https://github.com/WatchaAI/task-manager-cli), which is compatible with [task-manager-desktop](https://github.com/WatchaAI/task-manager-desktop).
+The desktop app and CLI share the same local SQLite database. The skill does not define its own task store; it delegates all task operations to [task-manager-cli](https://github.com/WatchaAI/task-manager-cli), which is compatible with [task-manager-desktop](https://github.com/WatchaAI/task-manager-desktop), including canceled tasks, overdue-task auto-completion, cloud-sync IDs, and deletion tombstones.
 
 Use a custom database when needed:
 

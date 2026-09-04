@@ -1,6 +1,6 @@
 ---
 name: task-manager-skill
-description: Use this skill when the user wants an agent to manage tasks, todos, plans, kanban workflow, Task Manager Desktop data, or operate the task-manager-cli. The skill helps Codex automatically install or update task-manager-cli, discover its available commands, locate the shared SQLite database, and execute task operations such as list, search, add, update, start, done, move, stats, type management, and subtask management.
+description: Manage tasks, plans, kanban workflow, and Task Manager Desktop data through task-manager-cli. Use when the user wants to inspect or change tasks, categories, statuses, people, locations, or subtasks in the shared desktop database.
 ---
 
 # Task Manager Skill
@@ -21,6 +21,7 @@ scripts/install_task_manager_cli.sh
 tm --help
 tm --json db
 tm --json types
+tm --json people
 tm --json stats
 ```
 
@@ -53,6 +54,7 @@ Task types:
 tm --json types
 tm --json type add 工作
 tm --json type rename 工作 客户项目
+tm --json type move 客户项目 --before 日常
 tm --json type delete 客户项目
 ```
 
@@ -62,6 +64,7 @@ Read tasks:
 tm --json list
 tm --json list --type 工作
 tm --json list --status todo
+tm --json list --status canceled
 tm --json search 周报
 tm --json board
 tm --json stats
@@ -71,10 +74,11 @@ tm --json show 1
 Write tasks:
 
 ```bash
-tm --json add "写周报" --type 工作 --status todo --subtask "列提纲"
-tm --json update 1 --title "写本周周报" --description "整理关键进展"
+tm --json add "写周报" --type 工作 --status todo --location "会议室" --person "张三" --subtask "列提纲"
+tm --json update 1 --title "写本周周报" --description "整理关键进展" --type 客户项目
 tm --json start 1
 tm --json done 1
+tm --json cancel 1
 tm --json move 1 --status in_progress --after 2
 tm --json delete 1
 ```
@@ -100,6 +104,9 @@ tm --json subtask delete 1 1
 - Use `TASK_MANAGER_DB` or `--db` only when the user names a specific database or the default database is clearly wrong.
 - After writes, run a focused read such as `show`, `list --status ...`, or `stats` to verify the result.
 - If a command fails, run `tm --help` and adapt to the installed CLI surface instead of assuming this document is perfectly current.
+- The shared status set is `todo`, `in_progress`, `done`, and `canceled`; use `cancel` for cancellation rather than deletion when the user wants to retain history.
+- Task activity follows the desktop rule that unfinished tasks due two local calendar days ago or earlier are completed automatically. Rescheduling with `update --start ... --end ...` preserves the new dates and status.
+- Do not edit the SQLite file directly. Current CLI writes maintain desktop cloud-sync IDs and deletion tombstones; bypassing it can cause deleted data to reappear after iCloud merge.
 
 ## Default Database
 
